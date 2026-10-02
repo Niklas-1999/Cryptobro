@@ -1,0 +1,201 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>CRYPTOBRO // Neural Market Terminal</title>
+<meta name="description" content="Cyberpunk crypto market terminal — live prices, charts, news, sentiment and on-chain data.">
+<meta name="theme-color" content="#0a0003">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Cpolygon points='32,3 58,18 58,46 32,61 6,46 6,18' fill='%23120005' stroke='%23ff1744' stroke-width='4'/%3E%3Ctext x='32' y='42' font-family='monospace' font-size='28' font-weight='bold' fill='%23ff1744' text-anchor='middle'%3EC%3C/text%3E%3C/svg%3E">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@500;700;900&family=Rajdhani:wght@400;500;600;700&family=Share+Tech+Mono&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+
+<canvas id="bg"></canvas>
+<div class="fx-scanlines"></div>
+<div class="fx-vignette"></div>
+<div class="fx-sweep"></div>
+
+<!-- ============ BOOT SEQUENCE ============ -->
+<div id="boot">
+  <div class="boot-inner">
+    <div class="boot-logo glitch" data-text="CRYPTOBRO">CRYPTOBRO</div>
+    <div class="boot-sub">NEURAL MARKET TERMINAL // BUILD 2.077</div>
+    <pre id="bootLog"></pre>
+    <div class="boot-bar"><i id="bootBar"></i></div>
+    <div class="boot-hint">[ CLICK TO SKIP ]</div>
+  </div>
+</div>
+
+<div class="app" id="app">
+
+  <!-- ============ TOP BAR ============ -->
+  <header class="topbar">
+    <div class="brand">
+      <div class="hex"><span>₿</span></div>
+      <div>
+        <h1 class="glitch" data-text="CRYPTOBRO">CRYPTOBRO</h1>
+        <div class="brand-sub"><span class="blink">▮</span> NEURAL MARKET TERMINAL v2.077</div>
+      </div>
+    </div>
+
+    <div class="gstats" id="gstats">
+      <div class="gstat"><label>TOTAL MCAP</label><b id="gMcap">—</b><em id="gMcapChg"></em></div>
+      <div class="gstat"><label>24H VOLUME</label><b id="gVol">—</b></div>
+      <div class="gstat"><label>BTC DOM</label><b id="gBtcDom">—</b></div>
+      <div class="gstat"><label>ETH DOM</label><b id="gEthDom">—</b></div>
+      <div class="gstat"><label>FEAR/GREED</label><b id="gFng">—</b></div>
+      <div class="gstat hide-sm"><label>ACTIVE ASSETS</label><b id="gCoins">—</b></div>
+    </div>
+
+    <div class="sys">
+      <div class="clock" id="clock">00:00:00</div>
+      <div class="sys-row">
+        <span id="date">—</span>
+        <span class="link" id="link"><i></i><span id="linkTxt">CONNECTING</span></span>
+      </div>
+    </div>
+  </header>
+
+  <div class="dombar" id="dombar" title="Market cap dominance"></div>
+
+  <!-- ============ TICKER TAPE ============ -->
+  <div class="tape"><div class="tape-track" id="tape"></div></div>
+
+  <!-- ============ 4 CHARTS ============ -->
+  <section class="charts" id="charts"></section>
+
+  <!-- ============ MAIN GRID ============ -->
+  <section class="grid">
+
+    <article class="panel p-heat">
+      <header class="ph"><span class="ph-id">01</span><h2>MARKET_HEATMAP</h2><span class="ph-meta">TOP 30 // 24H Δ // SIZE = MCAP</span></header>
+      <div class="heat" id="heat"></div>
+    </article>
+
+    <article class="panel p-fng">
+      <header class="ph"><span class="ph-id">02</span><h2>FEAR_GREED.IDX</h2><span class="ph-meta" id="fngUpd">—</span></header>
+      <div class="fng">
+        <svg viewBox="0 0 220 130" class="gauge" id="gauge">
+          <defs>
+            <linearGradient id="gGrad" x1="0" x2="1">
+              <stop offset="0" stop-color="#ff1744"/>
+              <stop offset=".35" stop-color="#ff6d00"/>
+              <stop offset=".55" stop-color="#ffd600"/>
+              <stop offset=".8" stop-color="#76ff03"/>
+              <stop offset="1" stop-color="#00ff9c"/>
+            </linearGradient>
+            <filter id="glow"><feGaussianBlur stdDeviation="3" result="b"/><feMerge><feMergeNode in="b"/><feMergeNode in="SourceGraphic"/></feMerge></filter>
+          </defs>
+          <path d="M20 115 A90 90 0 0 1 200 115" class="g-track"/>
+          <path d="M20 115 A90 90 0 0 1 200 115" class="g-arc" id="gArc" filter="url(#glow)"/>
+          <g id="gTicks"></g>
+          <g id="gNeedle" class="g-needle"><line x1="110" y1="115" x2="110" y2="38"/><circle cx="110" cy="115" r="7"/></g>
+        </svg>
+        <div class="fng-val"><b id="fngVal">--</b><span id="fngCls">SYNCING</span></div>
+        <div class="fng-hist">
+          <div><label>YESTERDAY</label><b id="fngY">—</b></div>
+          <div><label>LAST WEEK</label><b id="fngW">—</b></div>
+          <div><label>LAST MONTH</label><b id="fngM">—</b></div>
+        </div>
+        <div class="fng-bars" id="fngBars"></div>
+      </div>
+    </article>
+
+    <article class="panel p-news">
+      <header class="ph"><span class="ph-id">03</span><h2>NEWS_FEED</h2><span class="ph-meta"><span class="live-dot"></span>LIVE</span></header>
+      <div class="news-filter" id="newsFilter"></div>
+      <div class="news" id="news"><div class="loading">DECRYPTING TRANSMISSIONS…</div></div>
+    </article>
+
+    <article class="panel p-movers">
+      <header class="ph"><span class="ph-id">04</span><h2>TOP_MOVERS</h2><span class="ph-meta">TOP 100 // 24H</span></header>
+      <div class="movers">
+        <div><h3 class="up">▲ GAINERS</h3><div id="gainers"></div></div>
+        <div><h3 class="down">▼ LOSERS</h3><div id="losers"></div></div>
+      </div>
+    </article>
+
+    <article class="panel p-whale">
+      <header class="ph"><span class="ph-id">05</span><h2>WHALE_TAPE</h2><span class="ph-meta">TRADES ≥ $<span id="whaleMin">50K</span></span></header>
+      <div class="flow">
+        <div class="flow-lbl"><span class="up">BUY <b id="flowBuy">50%</b></span><span>ORDER FLOW // 60S</span><span class="down"><b id="flowSell">50%</b> SELL</span></div>
+        <div class="flow-bar"><i id="flowFill"></i></div>
+      </div>
+      <div class="whales" id="whales"><div class="loading">LISTENING TO THE DEEP…</div></div>
+    </article>
+
+    <article class="panel p-trend">
+      <header class="ph"><span class="ph-id">06</span><h2>TRENDING_SIGNAL</h2><span class="ph-meta">MOST SEARCHED // 24H</span></header>
+      <div class="trend" id="trend"><div class="loading">SCANNING…</div></div>
+    </article>
+
+    <article class="panel p-btc">
+      <header class="ph"><span class="ph-id">07</span><h2>BTC_NETWORK</h2><span class="ph-meta">ON-CHAIN // MEMPOOL</span></header>
+      <div class="btcnet">
+        <div class="bn-block"><label>BLOCK HEIGHT</label><b id="bnHeight">—</b></div>
+        <div class="bn-block"><label>HASHRATE</label><b id="bnHash">—</b></div>
+        <div class="bn-wide">
+          <label>NEXT HALVING <span id="bnHalvBlocks"></span></label>
+          <div class="countdown" id="bnHalv">--D --H --M</div>
+          <div class="pbar"><i id="bnHalvBar"></i></div>
+        </div>
+        <div class="bn-wide">
+          <label>DIFFICULTY ADJ. <span id="bnDiffEta"></span></label>
+          <div class="bn-diff"><b id="bnDiffChg">—</b><span id="bnDiffPct"></span></div>
+          <div class="pbar"><i id="bnDiffBar"></i></div>
+        </div>
+        <div class="fees">
+          <div><label>FAST</label><b id="feeFast">—</b></div>
+          <div><label>30 MIN</label><b id="feeHalf">—</b></div>
+          <div><label>1 HOUR</label><b id="feeHour">—</b></div>
+          <div><label>ECONOMY</label><b id="feeEco">—</b></div>
+        </div>
+        <div class="unit">FEES IN SAT/VB</div>
+      </div>
+    </article>
+
+    <article class="panel p-sessions">
+      <header class="ph"><span class="ph-id">08</span><h2>GLOBAL_SESSIONS</h2><span class="ph-meta">TRADFI MARKET HOURS</span></header>
+      <div class="sessions" id="sessions"></div>
+    </article>
+
+    <article class="panel p-table">
+      <header class="ph"><span class="ph-id">09</span><h2>MARKET_MATRIX</h2><span class="ph-meta">TOP 100 BY MARKET CAP // CLICK HEADERS TO SORT</span></header>
+      <div class="table-wrap">
+        <table class="mtable" id="mtable">
+          <thead><tr>
+            <th data-k="market_cap_rank" class="num">#</th>
+            <th data-k="name">ASSET</th>
+            <th data-k="current_price" class="num">PRICE</th>
+            <th data-k="price_change_percentage_1h_in_currency" class="num">1H</th>
+            <th data-k="price_change_percentage_24h_in_currency" class="num">24H</th>
+            <th data-k="price_change_percentage_7d_in_currency" class="num">7D</th>
+            <th data-k="market_cap" class="num">MARKET CAP</th>
+            <th data-k="total_volume" class="num">VOLUME 24H</th>
+            <th class="num">7D TREND</th>
+          </tr></thead>
+          <tbody id="mbody"><tr><td colspan="9" class="loading">COMPILING MATRIX…</td></tr></tbody>
+        </table>
+      </div>
+    </article>
+  </section>
+
+  <footer class="foot">
+    <span>CRYPTOBRO // NEURAL MARKET TERMINAL</span>
+    <span>DATA: BINANCE · COINGECKO · ALTERNATIVE.ME · MEMPOOL.SPACE · COINTELEGRAPH · COINDESK · DECRYPT</span>
+    <span>NOT FINANCIAL ADVICE. STAY FROSTY, CHOOM.</span>
+  </footer>
+</div>
+
+<div class="tooltip" id="tip"></div>
+
+<script src="js/util.js"></script>
+<script src="js/bg.js"></script>
+<script src="js/chart.js"></script>
+<script src="js/app.js"></script>
+</body>
+</html>
