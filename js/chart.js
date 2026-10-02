@@ -103,7 +103,7 @@ class NeonChart {
       ctx.setLineDash([]);
       ctx.fillStyle = 'rgba(255,190,200,.45)';
       ctx.textAlign = 'left';
-      ctx.fillText(fmtPrice(hi - ((hi - lo) * i) / 4).replace('$', ''), padL + w + 6, y);
+      ctx.fillText(fmtPrice(hi - ((hi - lo) * i) / 4, true), padL + w + 6, y);
     }
     ctx.textAlign = 'center';
     for (let i = 0; i <= 3; i++) {
@@ -183,7 +183,7 @@ class NeonChart {
     ctx.shadowBlur = 0;
     ctx.fillStyle = '#000';
     ctx.textAlign = 'left';
-    ctx.fillText(fmtPrice(last.p).replace('$', ''), padL + w + 8, ly + 0.5);
+    ctx.fillText(fmtPrice(last.p, true), padL + w + 8, ly + 0.5);
 
     // pulsing live dot
     const ph = (now % 1600) / 1600;

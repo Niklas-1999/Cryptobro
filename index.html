@@ -52,7 +52,10 @@
     </div>
 
     <div class="sys">
-      <div class="clock" id="clock">00:00:00</div>
+      <div class="sys-top">
+        <div class="curswitch" id="curSwitch" title="Display currency"><button data-c="eur">€ EUR</button><button data-c="usd">$ USD</button></div>
+        <div class="clock" id="clock">00:00:00</div>
+      </div>
       <div class="sys-row">
         <span id="date">—</span>
         <span class="link" id="link"><i></i><span id="linkTxt">CONNECTING</span></span>
@@ -120,7 +123,7 @@
     </article>
 
     <article class="panel p-whale">
-      <header class="ph"><span class="ph-id">05</span><h2>WHALE_TAPE</h2><span class="ph-meta">TRADES ≥ $<span id="whaleMin">50K</span></span></header>
+      <header class="ph"><span class="ph-id">05</span><h2>WHALE_TAPE</h2><span class="ph-meta">TRADES ≥ <span id="whaleMin">50K</span></span></header>
       <div class="flow">
         <div class="flow-lbl"><span class="up">BUY <b id="flowBuy">50%</b></span><span>ORDER FLOW // 60S</span><span class="down"><b id="flowSell">50%</b> SELL</span></div>
         <div class="flow-bar"><i id="flowFill"></i></div>
@@ -164,7 +167,7 @@
     </article>
 
     <article class="panel p-table">
-      <header class="ph"><span class="ph-id">09</span><h2>MARKET_MATRIX</h2><span class="ph-meta">TOP 100 BY MARKET CAP // CLICK HEADERS TO SORT</span></header>
+      <header class="ph"><span class="ph-id">09</span><h2>MARKET_MATRIX</h2><span class="ph-meta">TOP 100 BY MARKET CAP // CLICK HEADERS TO SORT · CLICK A COIN FOR DETAILS</span></header>
       <div class="table-wrap">
         <table class="mtable" id="mtable">
           <thead><tr>

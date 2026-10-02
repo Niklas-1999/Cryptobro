@@ -13,8 +13,18 @@ function esc(s) {
   return String(s ?? '').replace(/[&<>"']/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
 }
 
+/* ---------- currency ---------- */
+const CURRENCIES = {
+  eur: { code: 'eur', sym: '€', loc: 'de-DE', suffix: true },
+  usd: { code: 'usd', sym: '$', loc: 'en-US', suffix: false }
+};
+let CUR = CURRENCIES[store.get('cur', 'eur')] || CURRENCIES.eur;
+
+const nf = (v, d) => v.toLocaleString(CUR.loc, { minimumFractionDigits: d, maximumFractionDigits: d });
+const withSym = s => (CUR.suffix ? s + ' ' + CUR.sym : CUR.sym + s);
+
 /** Adaptive price formatting: big prices get 2 decimals, tiny ones get significant digits. */
-function fmtPrice(v) {
+function fmtPrice(v, bare = false) {
   if (v == null || isNaN(v)) return '—';
   const a = Math.abs(v);
   let d;
@@ -23,20 +33,24 @@ function fmtPrice(v) {
   else if (a >= 0.01) d = 4;
   else if (a === 0) d = 2;
   else d = Math.min(10, Math.max(4, -Math.floor(Math.log10(a)) + 3));
-  return '$' + v.toLocaleString('en-US', { minimumFractionDigits: d, maximumFractionDigits: d });
+  return bare ? nf(v, d) : withSym(nf(v, d));
 }
 
-function fmtBig(v, prefix = '$') {
+function fmtBig(v, sym = true) {
   if (v == null || isNaN(v)) return '—';
   const a = Math.abs(v);
   const units = [[1e12, 'T'], [1e9, 'B'], [1e6, 'M'], [1e3, 'K']];
-  for (const [n, u] of units) if (a >= n) return prefix + (v / n).toFixed(a / n >= 100 ? 1 : 2) + u;
-  return prefix + v.toFixed(0);
+  let s = nf(v, 0);
+  for (const [n, u] of units) if (a >= n) { s = nf(v / n, a / n >= 100 ? 1 : 2) + u; break; }
+  return sym ? withSym(s) : s;
 }
+
+/** Plain number (supply, block height, …) in the active locale. */
+const fmtNum = (v, d = 0) => (v == null || isNaN(v) ? '—' : nf(v, d));
 
 function fmtPct(v, digits = 2) {
   if (v == null || isNaN(v)) return '—';
-  return (v >= 0 ? '+' : '') + v.toFixed(digits) + '%';
+  return (v >= 0 ? '+' : '') + nf(v, digits) + '%';
 }
 
 const cls = v => (v >= 0 ? 'up' : 'down');

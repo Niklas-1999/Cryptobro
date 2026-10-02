@@ -5,6 +5,8 @@ A cyberpunk, dark-red crypto market dashboard — one page with everything at a 
 **Live:** https://niklas-1999.github.io/Cryptobro/
 
 ## Features
+- **€ / $ switch** — euro by default (German number format), toggle in the top-right
+- **Coin dossier** — click any coin anywhere (charts, ticker, heatmap, movers, trending, table, news tags, whale tape) for a popup with chart, stats, performance, supply, ATH/ATL, description and links. Deep link: `#coin=solana`
 - **4 live price charts** — pick any top-100 coin per slot (click the coin name), timeframes 1H / 24H / 7D / 30D / 1Y. Selections are remembered.
 - **Live prices** streamed via Binance WebSocket (ticker tape, charts, table flash on every tick)
 - **Global stats** — total market cap, 24h volume, BTC/ETH dominance, dominance bar
