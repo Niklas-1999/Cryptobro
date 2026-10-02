@@ -29,9 +29,9 @@
     const vx = W / 2;
     // glow at horizon
     const g = ctx.createLinearGradient(0, horizon - 120, 0, horizon + 40);
-    g.addColorStop(0, 'rgba(255,0,60,0)');
-    g.addColorStop(.8, 'rgba(255,0,60,.10)');
-    g.addColorStop(1, 'rgba(255,0,60,0)');
+    g.addColorStop(0, Theme.a(0));
+    g.addColorStop(.8, Theme.a(.10));
+    g.addColorStop(1, Theme.a(0));
     ctx.fillStyle = g;
     ctx.fillRect(0, horizon - 120, W, 160);
 
@@ -40,11 +40,11 @@
     ctx.save();
     ctx.beginPath(); ctx.rect(0, 0, W, horizon); ctx.clip();
     const sg = ctx.createLinearGradient(0, horizon - sr, 0, horizon);
-    sg.addColorStop(0, 'rgba(255,40,80,.18)');
-    sg.addColorStop(1, 'rgba(120,0,30,.04)');
+    sg.addColorStop(0, Theme.light(.08, .18));
+    sg.addColorStop(1, Theme.tint(.47, .04));
     ctx.fillStyle = sg;
     ctx.beginPath(); ctx.arc(vx, horizon, sr, Math.PI, 0); ctx.fill();
-    ctx.fillStyle = 'rgba(5,0,2,.9)';
+    ctx.fillStyle = Theme.tint(.02, .9);
     for (let i = 0; i < 7; i++) {
       const yy = horizon - sr * 0.08 - i * sr * 0.12 - ((t * 0.01) % (sr * 0.12));
       ctx.fillRect(vx - sr, yy, sr * 2, 2 + i * 0.6);
@@ -58,7 +58,7 @@
     for (let i = -24; i <= 24; i++) {
       const xb = vx + i * W * 0.09;
       const a = 0.22 - Math.abs(i) * 0.006;
-      ctx.strokeStyle = `rgba(255,23,68,${Math.max(a, .04)})`;
+      ctx.strokeStyle = Theme.a(Math.max(a, .04));
       ctx.beginPath(); ctx.moveTo(vx + i * 6, horizon); ctx.lineTo(xb, H); ctx.stroke();
     }
     // horizontal lines moving toward viewer
@@ -66,7 +66,7 @@
     for (let i = 0; i < 22; i++) {
       const z = (i + speed) / 22;
       const y = horizon + Math.pow(z, 2.4) * (H - horizon);
-      ctx.strokeStyle = `rgba(255,23,68,${0.05 + z * 0.28})`;
+      ctx.strokeStyle = Theme.a(0.05 + z * 0.28);
       ctx.beginPath(); ctx.moveTo(0, y); ctx.lineTo(W, y); ctx.stroke();
     }
     ctx.restore();
@@ -82,7 +82,7 @@
         if (y < -16 || y > H) continue;
         const a = (1 - k / c.len) * 0.22;
         const ch = GLYPHS[(Math.floor(c.seed + k * 7 + t / 180) % GLYPHS.length + GLYPHS.length) % GLYPHS.length];
-        ctx.fillStyle = k === 0 ? `rgba(255,200,210,${a * 2})` : `rgba(255,23,68,${a})`;
+        ctx.fillStyle = k === 0 ? Theme.light(.78, a * 2) : Theme.a(a);
         ctx.fillText(ch, c.x, y);
       }
       if (c.y - c.len * 16 > H) { c.on = Math.random() < 0.5; c.y = -Math.random() * H * 0.5; }
@@ -95,7 +95,7 @@
       if (p.y < -5) { p.y = H + 5; p.x = Math.random() * W; }
       if (p.x < -5) p.x = W + 5; if (p.x > W + 5) p.x = -5;
       const a = 0.25 + Math.sin(p.a) * 0.2;
-      ctx.fillStyle = `rgba(255,60,90,${a})`;
+      ctx.fillStyle = Theme.light(.15, a);
       ctx.beginPath(); ctx.arc(p.x, p.y, p.r, 0, Math.PI * 2); ctx.fill();
     }
   }
@@ -111,7 +111,7 @@
       if (t > glitchUntil && Math.random() < 0.004) glitchUntil = t + 120 + Math.random() * 200;
       if (t < glitchUntil) {
         for (let i = 0; i < 3; i++) {
-          ctx.fillStyle = `rgba(255,23,68,${Math.random() * 0.12})`;
+          ctx.fillStyle = Theme.a(Math.random() * 0.12);
           ctx.fillRect(0, Math.random() * H, W, Math.random() * 6 + 1);
         }
       }

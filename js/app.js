@@ -218,6 +218,7 @@ function buildCards() {
   S.cards = S.slots.map((id, i) => {
     const el = document.createElement('article');
     el.className = 'panel cc';
+    el.dataset.panel = 'chart' + i;
     el.innerHTML = `
       <div class="cc-top">
         <div class="cc-coin" title="Change asset"><img alt="" onerror="this.style.visibility='hidden'"><div><div class="cc-name"></div><div class="cc-sym"></div></div><span class="caret">▼</span></div>
@@ -628,7 +629,16 @@ showWhaleMin();
 /* =========================================================
    Global stats
    ========================================================= */
-const DOM_COLORS = ['#ff1744', '#c4001d', '#ff6d00', '#ffb000', '#8a0a22', '#ff4f81', '#d50057', '#6d1a2a', '#a33'];
+let lastDominance = null;
+function renderDominance() {
+  if (!lastDominance) return;
+  const dom = Object.entries(lastDominance).sort((a, b) => b[1] - a[1]).slice(0, 8);
+  const other = 100 - dom.reduce((a, b) => a + b[1], 0);
+  const cols = Theme.shades(9);
+  $('#dombar').innerHTML = [...dom, ['others', other]].map(([k, v], i) =>
+    `<i style="flex-grow:${v};background:${cols[i]};box-shadow:0 0 8px ${cols[i]}" data-l="${esc(k.toUpperCase())} ${fmtNum(v, 2)}%"></i>`).join('');
+}
+addEventListener('themechange', renderDominance);
 async function loadGlobal() {
   try {
     const { data: g } = await fetchJSON(`${CG}/global`);
@@ -639,10 +649,8 @@ async function loadGlobal() {
     countTo($('#gCoins'), g.active_cryptocurrencies, v => fmtNum(v));
     const ch = g.market_cap_change_percentage_24h_usd;
     const e = $('#gMcapChg'); e.className = cls(ch); e.textContent = fmtPct(ch) + ' 24H';
-    const dom = Object.entries(g.market_cap_percentage).sort((a, b) => b[1] - a[1]).slice(0, 8);
-    const other = 100 - dom.reduce((a, b) => a + b[1], 0);
-    $('#dombar').innerHTML = [...dom, ['others', other]].map(([k, v], i) =>
-      `<i style="flex-grow:${v};background:${DOM_COLORS[i % DOM_COLORS.length]};box-shadow:0 0 8px ${DOM_COLORS[i % DOM_COLORS.length]}" data-l="${esc(k.toUpperCase())} ${fmtNum(v, 2)}%"></i>`).join('');
+    lastDominance = g.market_cap_percentage;
+    renderDominance();
   } catch (e) { console.warn('global failed', e); }
 }
 
@@ -988,6 +996,10 @@ function updateModalLive() {
 const safeUrl = u => (typeof u === 'string' && /^https?:\/\//i.test(u.trim()) ? u.trim() : null);
 const fmtDate = d => (d ? new Date(d).toLocaleDateString('en-GB', { day: '2-digit', month: 'short', year: 'numeric' }) : '—');
 
+/** Chart card shown at visual position n (cards can be rearranged by drag & drop). */
+const cardAt = n => S.cards.find(c => c.el === $$('#charts > .cc')[n]);
+const markSlots = id => $$('.md-slots button', modalEl).forEach(b => b.classList.toggle('on', S.slots[cardAt(+b.dataset.slot)?.i] === id));
+
 function renderModal() {
   const c = { ...modal.base, ...(modal.detail || {}) };
   const img = $('.md-img', modalEl);
@@ -1042,7 +1054,7 @@ function renderModal() {
     $('.md-links', modalEl).innerHTML = links.map(([l, u]) => `<a href="${esc(safeUrl(u))}" target="_blank" rel="noopener">${l} ↗</a>`).join('');
   } else $('.md-links', modalEl).innerHTML = '';
 
-  $$('.md-slots button', modalEl).forEach(b => b.classList.toggle('on', S.slots[+b.dataset.slot] === c.id));
+  markSlots(c.id);
   updateModalLive();
 }
 
@@ -1055,13 +1067,13 @@ modalEl.addEventListener('click', e => {
   }
   const slot = e.target.closest('[data-slot]');
   if (slot) {
-    const i = +slot.dataset.slot, id = modal.coin;
-    if (!S.byId[id] && !modal.detail) return;   // need at least symbol/name before pinning
+    const card = cardAt(+slot.dataset.slot), id = modal.coin;
+    if (!card || (!S.byId[id] && !modal.detail)) return;   // need at least symbol/name before pinning
     if (!S.byId[id]) S.byId[id] = marketFromDetail(modal.detail);
-    S.slots[i] = id; store.set('slots', S.slots);
-    S.cards[i].last = null;
-    loadChart(S.cards[i], true);
-    $$('.md-slots button', modalEl).forEach(b => b.classList.toggle('on', S.slots[+b.dataset.slot] === id));
+    S.slots[card.i] = id; store.set('slots', S.slots);
+    card.last = null;
+    loadChart(card, true);
+    markSlots(id);
   }
 });
 addEventListener('keydown', e => { if (e.key === 'Escape' && modal.coin) closeModal(); });

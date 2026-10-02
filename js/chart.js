@@ -50,7 +50,7 @@ class NeonChart {
   }
 
   get color() {
-    if (this.data.length < 2) return '#ff1744';
+    if (this.data.length < 2) return Theme.hex;
     return (this.live ?? this.data[this.data.length - 1].p) >= this.data[0].p ? '#00ff9c' : '#ff2a4d';
   }
 
@@ -97,21 +97,21 @@ class NeonChart {
     ctx.lineWidth = 1;
     for (let i = 0; i <= 4; i++) {
       const y = padT + (h * i) / 4;
-      ctx.strokeStyle = 'rgba(255,23,68,.09)';
+      ctx.strokeStyle = Theme.a(.09);
       ctx.setLineDash([2, 4]);
       ctx.beginPath(); ctx.moveTo(padL, y); ctx.lineTo(padL + w, y); ctx.stroke();
       ctx.setLineDash([]);
-      ctx.fillStyle = 'rgba(255,190,200,.45)';
+      ctx.fillStyle = Theme.light(.7, .45);
       ctx.textAlign = 'left';
       ctx.fillText(fmtPrice(hi - ((hi - lo) * i) / 4, true), padL + w + 6, y);
     }
     ctx.textAlign = 'center';
     for (let i = 0; i <= 3; i++) {
       const x = padL + (w * i) / 3;
-      ctx.strokeStyle = 'rgba(255,23,68,.06)';
+      ctx.strokeStyle = Theme.a(.06);
       ctx.beginPath(); ctx.moveTo(x, padT); ctx.lineTo(x, padT + h); ctx.stroke();
       const t = t0 + ((t1 - t0) * i) / 3;
-      ctx.fillStyle = 'rgba(255,190,200,.35)';
+      ctx.fillStyle = Theme.light(.7, .35);
       ctx.textAlign = i === 0 ? 'left' : i === 3 ? 'right' : 'center';
       ctx.fillText(this.fmtTime(t), x, H - 7);
     }
@@ -148,8 +148,8 @@ class NeonChart {
     // scan head during draw-in
     if (this.anim < 1) {
       const sg = ctx.createLinearGradient(clipX - 40, 0, clipX, 0);
-      sg.addColorStop(0, 'rgba(255,23,68,0)');
-      sg.addColorStop(1, 'rgba(255,23,68,.35)');
+      sg.addColorStop(0, Theme.a(0));
+      sg.addColorStop(1, Theme.a(.35));
       ctx.fillStyle = sg;
       ctx.fillRect(clipX - 40, padT, 40, h);
       ctx.fillStyle = '#fff';
@@ -160,7 +160,7 @@ class NeonChart {
     // high / low markers
     const mark = (i, label, above) => {
       const x = X(d[i].t), y = Y(d[i].p);
-      ctx.fillStyle = 'rgba(255,220,225,.75)';
+      ctx.fillStyle = Theme.light(.85, .75);
       ctx.textAlign = x > padL + w * 0.8 ? 'right' : x < padL + w * 0.2 ? 'left' : 'center';
       ctx.fillText(`${label} ${fmtPrice(d[i].p)}`, x, above ? y - 8 : y + 9);
       ctx.beginPath(); ctx.arc(x, y, 2, 0, Math.PI * 2); ctx.fill();

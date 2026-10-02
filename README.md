@@ -7,6 +7,8 @@ A cyberpunk, dark-red crypto market dashboard — one page with everything at a 
 ## Features
 - **€ / $ switch** — euro by default (German number format), toggle in the top-right
 - **Coin dossier** — click any coin anywhere (charts, ticker, heatmap, movers, trending, table, news tags, whale tape) for a popup with chart, stats, performance, supply, ATH/ATL, description and links. Deep link: `#coin=solana`
+- **Drag & drop layout** — grab the ⠿ handle in any panel header to rearrange panels (and the 4 charts); saved automatically
+- **Theme color picker** — click the glowing dot in the top-right: 12 presets or any custom color / hex code; the whole UI, background and charts recolor live
 - **4 live price charts** — pick any top-100 coin per slot (click the coin name), timeframes 1H / 24H / 7D / 30D / 1Y. Selections are remembered.
 - **Live prices** streamed via Binance WebSocket (ticker tape, charts, table flash on every tick)
 - **Global stats** — total market cap, 24h volume, BTC/ETH dominance, dominance bar
