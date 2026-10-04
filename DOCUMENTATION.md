@@ -532,7 +532,8 @@ discussed and agreed (no bot code exists yet).
 ### 13.5 Status: `Cryptobro-bot` (built 2026-10-04)
 
 - Local repo `D:\Cryptobro-bot` (Python 3.10, standard library only). Its own `README.md` and
-  `CLAUDE.md` describe it. Not yet on GitHub (it should be a **private** repo).
+  `CLAUDE.md` describe it. Private GitHub repo: https://github.com/Niklas-1999/Cryptobro-bot (code only; `data/` and
+  `reports/` are gitignored and stay on the PC).
 - Paper trading started 2026-10-04 with €100 for the AI plus three benchmarks
   (`HODL_BTC`, `HODL_TOP10`, `TREND_BTC`).
 - `data/status.json` is written each day for a future **bot panel** on the dashboard. Open
