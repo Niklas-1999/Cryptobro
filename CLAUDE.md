@@ -25,6 +25,6 @@ mechanism, known limitations, trading-bot groundwork).
 - Explain market concepts in plain language; never present anything as financial advice.
 - Test changes in a real (headless Edge) browser before pushing; see `DOCUMENTATION.md` §12.
 
-## Next project
-An AI-assisted trading bot is planned as a **separate project** (server-side, secrets, risk
-limits, paper trading first). Groundwork and decisions: `DOCUMENTATION.md` §13.
+## Sister project: the trading bot
+An AI-assisted paper-trading bot lives in a **separate repo** at `D:\Cryptobro-bot` (its own
+README/CLAUDE.md). Decisions and status: `DOCUMENTATION.md` §13.4 and §13.5.

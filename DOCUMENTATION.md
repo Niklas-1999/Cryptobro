@@ -5,7 +5,7 @@
 > made and why, what is known to be imperfect, and the groundwork already discussed for the
 > next project: an automated crypto trading bot.
 >
-> Last updated: 2026-10-04.
+> Last updated: 2026-10-04 (trading bot decisions added, see §13.4 and §13.5).
 
 ---
 
@@ -23,7 +23,7 @@
 10. [Design system](#10-design-system)
 11. [Known limitations and planned fixes](#11-known-limitations-and-planned-fixes)
 12. [Development and testing workflow](#12-development-and-testing-workflow)
-13. [Trading bot: groundwork and decisions so far](#13-trading-bot-groundwork-and-decisions-so-far)
+13. [Trading bot: groundwork, decisions, status](#13-trading-bot-groundwork-and-decisions-so-far)
 
 ---
 
@@ -504,15 +504,42 @@ discussed and agreed (no bot code exists yet).
 - Exchange availability for German residents should be checked (e.g. Binance, Kraken, Bitvavo,
   Bitpanda).
 
-### 13.4 Offered next step
+### 13.4 Decisions (second planning chat, 2026-10-04)
 
-A **paper-trading simulator** was offered: define a simple strategy, trade virtual euros against
-live prices (reusing the dashboard's data plumbing: Binance WebSocket + klines, EURUSDT
-conversion, Fear & Greed, news), and track P&L over days or weeks before any real money is
-involved. It could be a dashboard panel or a separate page/project. Not built yet; the owner
-has not decided.
+- **Goal:** option C (eventually real profit), but for now purely an experiment to learn about
+  AI agents and trading bots. No profit expected yet. Taxes are dealt with after the
+  experimental phase (the bot logs every trade to `data/trades.csv` anyway).
+- **Approach:** no fixed strategy. Once a day an AI reads a market brief and decides a target
+  portfolio. Because Claude's training data covers past prices, backtesting an LLM is
+  meaningless; **forward paper trading against simple benchmark bots** is the test.
+- **Principle: "the AI proposes, code disposes."** Hard risk limits in code; the AI never sees
+  keys or places orders.
+- **Capital:** €100 (virtual now, real later). Universe: top 20 coins with a Kraken EUR pair
+  (stablecoins, exchange tokens and privacy coins excluded); the AI holds a few of them.
+- **AI:** headless Claude Code (`claude -p`) on the owner's **Claude Pro** plan, so no extra
+  cost. (Anthropic announced and then paused moving `claude -p` to a separate monthly credit;
+  the API, at a few € per month, is the fallback.)
+- **Hosting:** the owner's PC for now (Windows scheduled task: at logon + hourly, at most one
+  run per day). A Hetzner VPS later.
+- **Exchange:** Kraken recommended (MiCA license via Ireland, EUR pairs, mature API, official
+  ccxt/Freqtrade support). Bitvavo is cheaper but less mature for bots. No account needed
+  until live trading.
+- **Reporting:** a markdown file per day, plus a Cryptobro dashboard panel later. The owner does
+  **not** use Telegram.
+- **Costs:** ~€0 until the owner is confident in the paper results.
+- The owner asked for a security walkthrough (API keys, server) before going live.
 
-### 13.5 Reusable pieces from the dashboard
+### 13.5 Status: `Cryptobro-bot` (built 2026-10-04)
+
+- Local repo `D:\Cryptobro-bot` (Python 3.10, standard library only). Its own `README.md` and
+  `CLAUDE.md` describe it. Not yet on GitHub (it should be a **private** repo).
+- Paper trading started 2026-10-04 with €100 for the AI plus three benchmarks
+  (`HODL_BTC`, `HODL_TOP10`, `TREND_BTC`).
+- `data/status.json` is written each day for a future **bot panel** on the dashboard. Open
+  question: how the static GitHub Pages site gets that data (e.g. published to a branch, or a
+  local-only view).
+
+### 13.6 Reusable pieces from the dashboard
 
 - Binance REST + WebSocket handling with host fallback and reconnect: `binance()`,
   `connectWS()`, `scheduleWS()`, the watchdog, `pollTickers()`.
